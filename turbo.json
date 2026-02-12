@@ -1,10 +1,10 @@
 {
-	"$schema": "https://turborepo.com/schema.json",
-	"tasks": {
-		"typecheck": {},
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**"]
-		}
-	}
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
+    "typecheck": {},
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    }
+  }
 }
