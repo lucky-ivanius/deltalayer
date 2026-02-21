@@ -15,6 +15,7 @@ app
     proxy(`${c.env.VERCEL_AI_GATEWAY_BASE_URL}${c.req.path}?${new URLSearchParams(c.req.query()).toString()}`, {
       ...c.req,
       headers: {
+        ...c.req.header(),
         Authorization: `Bearer ${c.env.VERCEL_AI_GATEWAY_API_KEY}`,
         "x-api-key": undefined,
       },
@@ -23,32 +24,9 @@ app
 
 /* Error handling */
 app
-  /* Not found */
-  .get("*", (c) => notFound(c))
   /* Rest */
   .onError((err, c) => {
     console.error(err);
-
-    if ("getResponse" in err) {
-      const { status } = err.getResponse();
-
-      switch (status) {
-        case 400:
-          return badRequest(c, err);
-        case 401:
-          return unauthorized(c, err);
-        case 402:
-          return paymentRequired(c, err);
-        case 403:
-          return forbidden(c, err);
-        case 404:
-          return notFound(c, err);
-        case 405:
-          return methodNotAllowed(c, err);
-        default:
-          return unexpectedError(c);
-      }
-    }
 
     return unexpectedError(c);
   });
