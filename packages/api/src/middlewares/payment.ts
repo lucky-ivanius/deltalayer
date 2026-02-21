@@ -26,7 +26,7 @@ export const paymentMiddleware = <TData>(calculatePrice: CalculatePrice<TData>) 
     const cachedPrice = await c.env.REQUEST_KV.get(requestKey);
     const price = cachedPrice ? Number(cachedPrice) : await calculatePrice(body);
 
-    const response = honoPaymentMiddleware(
+    const response = await honoPaymentMiddleware(
       {
         accepts: {
           scheme: "exact",
