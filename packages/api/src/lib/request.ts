@@ -1,5 +1,3 @@
-import { serialize } from "node:v8";
-
 export type RequestKeyArgs<TBody> = {
   path: string;
   method: string;
@@ -7,6 +5,7 @@ export type RequestKeyArgs<TBody> = {
 };
 
 export const getRequestKey = <TBody>({ path, method, body }: RequestKeyArgs<TBody>): string => {
-  const serialized = serialize([path, method, body]);
-  return serialized.toBase64();
+  const raw = JSON.stringify([path, method, body]);
+  const encoded = new TextEncoder().encode(raw);
+  return btoa(String.fromCharCode(...encoded));
 };
