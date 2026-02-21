@@ -6,7 +6,9 @@ import { createMiddleware } from "hono/factory";
 import type { Env } from "../env";
 import { getRequestKey } from "../lib/request";
 
-export const paymentMiddleware = () =>
+export type CalculatePrice<TData> = (data: TData) => number | Promise<number>;
+
+export const paymentMiddleware = <TData>(calculatePrice: CalculatePrice<TData>) =>
   createMiddleware<Env>(async (c, next) => {
     const facilitator = new HTTPFacilitatorClient({
       url: c.env.X402_FACILITATOR_URL,
@@ -15,13 +17,14 @@ export const paymentMiddleware = () =>
     const server = new x402ResourceServer(facilitator);
     registerExactEvmScheme(server);
 
-    const body = await c.req.raw.clone().json();
-    const queryParams = c.req.query();
-
-    const requestKey = getRequestKey({ method: c.req.method, path: c.req.path, body, queryParams });
+    const body = (await c.req.raw
+      .clone()
+      .json()
+      .catch(() => ({}))) as TData;
+    const requestKey = getRequestKey({ method: c.req.method, path: c.req.path, body });
 
     const cachedPrice = await c.env.REQUEST_KV.get(requestKey);
-    const price = cachedPrice ? Number(cachedPrice) : Math.random() * 0.01;
+    const price = cachedPrice ? Number(cachedPrice) : await calculatePrice(body);
 
     const response = honoPaymentMiddleware(
       {

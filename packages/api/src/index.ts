@@ -3,13 +3,16 @@ import { proxy } from "hono/proxy";
 
 import type { Env } from "./env";
 import { paymentMiddleware } from "./middlewares/payment";
-import { badRequest, forbidden, methodNotAllowed, notFound, paymentRequired, unauthorized, unexpectedError } from "./utils/response";
+import { unexpectedError } from "./utils/response";
 
 const app = new Hono<Env>();
 
 /* Register routes */
 app
-  .use("/v1/messages", paymentMiddleware())
+  .use(
+    "/v1/messages",
+    paymentMiddleware(() => Math.random() * 0.01)
+  )
   .use("/v1/generation")
   .all((c) =>
     proxy(`${c.env.VERCEL_AI_GATEWAY_BASE_URL}${c.req.path}?${new URLSearchParams(c.req.query()).toString()}`, {
