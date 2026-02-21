@@ -30,7 +30,7 @@ export const paymentMiddleware = <TData>(calculatePrice: CalculatePrice<TData>) 
       {
         accepts: {
           scheme: "exact",
-          network: "eip155:84532",
+          network: c.env.NETWORK as `${string}:${string}`,
           payTo: c.env.X402_WALLET_ADDRESS,
           price: `$${price}`,
         },
