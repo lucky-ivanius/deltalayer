@@ -2,19 +2,17 @@
   "$schema": "https://unpkg.com/wrangler@4.65.0/config-schema.json",
   "name": "api",
   "main": "src/index.ts",
-  "compatibility_date": "2026-02-12"
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
+  "compatibility_date": "2026-02-12",
+  "compatibility_flags": ["nodejs_compat"],
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
-  // "kv_namespaces": [
-  //   {
-  //     "binding": "MY_KV_NAMESPACE",
-  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
+  "kv_namespaces": [
+    {
+      "binding": "REQUEST_KV",
+      "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  ]
   // "r2_buckets": [
   //   {
   //     "binding": "MY_BUCKET",

@@ -1,19 +1,31 @@
 import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import { proxy } from "hono/proxy";
 
 import type { Env } from "./env";
+import { paymentMiddleware } from "./middlewares/payment";
 import { badRequest, forbidden, methodNotAllowed, notFound, paymentRequired, unauthorized, unexpectedError } from "./utils/response";
 
 const app = new Hono<Env>();
 
-/* Register middlewares */
-app.use(logger()).use(cors());
+/* Register routes */
+app
+  .use("/v1/messages", paymentMiddleware())
+  .use("/v1/generation")
+  .all((c) =>
+    proxy(`${c.env.VERCEL_AI_GATEWAY_BASE_URL}${c.req.path}?${new URLSearchParams(c.req.query()).toString()}`, {
+      ...c.req,
+      headers: {
+        Authorization: `Bearer ${c.env.VERCEL_AI_GATEWAY_API_KEY}`,
+        "x-api-key": undefined,
+      },
+    })
+  );
 
+/* Error handling */
 app
   /* Not found */
   .get("*", (c) => notFound(c))
-  /* Handle errors */
+  /* Rest */
   .onError((err, c) => {
     console.error(err);
 
