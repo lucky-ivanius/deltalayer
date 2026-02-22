@@ -1,0 +1,17 @@
+{
+  "name": "@deltalayer/examples-anthropic",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@x402/evm": "^2.3.1",
+    "@x402/fetch": "^2.3.0",
+    "viem": "^2.46.2"
+  }
+}
