@@ -23,8 +23,9 @@ export const paymentMiddleware = <TData>(calculatePrice: CalculatePrice<TData>) 
       .catch(() => ({}))) as TData;
     const requestKey = getRequestKey({ method: c.req.method, path: c.req.path, body });
 
-    const cachedPrice = await c.env.REQUEST_KV.get(requestKey);
-    const price = cachedPrice ? Number(cachedPrice) : await calculatePrice(body);
+    const cachedPrice = await c.env.REQUEST_KV.get(requestKey).catch(() => null);
+    const parsedCache = cachedPrice !== null ? Number(cachedPrice) : NaN;
+    const price = Number.isFinite(parsedCache) ? parsedCache : await calculatePrice(body);
 
     const response = await honoPaymentMiddleware(
       {
@@ -38,7 +39,7 @@ export const paymentMiddleware = <TData>(calculatePrice: CalculatePrice<TData>) 
       server
     )(c, next);
 
-    await c.env.REQUEST_KV.put(requestKey, price.toString());
+    await c.env.REQUEST_KV.put(requestKey, price.toString(), { expirationTtl: 60 }).catch(() => null);
 
     return response;
   });
