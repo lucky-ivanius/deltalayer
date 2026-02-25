@@ -78,7 +78,7 @@ sequenceDiagram
 
     Note over CRE: CRE workflow triggered (decentralized execution across DON)
     Note over CRE,LLM: Step 6: Fetch actual usage data
-    CRE->>LLM: GET /generation/{ID} to retrieve actual token count and cost
+    CRE->>LLM: GET /generation?id={ID} to retrieve actual token count and cost
     LLM-->>CRE: Return actual cost data
 
     Note over CRE: Compute refund: actual_cost = based on fetched data<br/>refund = paid - actual_cost<br/>Reach consensus via DON (BFT)
